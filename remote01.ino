@@ -149,7 +149,7 @@ void loop() {
   do {
     temp = ds18b20.getTempCByIndex(0);
     retry++;
-    if (retry==4) {break;}
+    if (retry==4) {break;} // dont get stuck waiting for a clean read
     delay(10);
   } while (temp == 85.0 || temp == (-127.0));
 
@@ -159,11 +159,11 @@ void loop() {
   
   client.publish(myPub, "Sleeping in 60 sec");
   
-  byte cnt = 60; // 60,000 msec
+  byte cnt = 240; // 240 iterations times 250 msec is 60 seconds ... need to wait at least 45 sec for OTA to work
   while(cnt--) {
-    ArduinoOTA.handle();
-    client.loop();
-    delay(250);
+    ArduinoOTA.handle(); // check for ota
+    client.loop(); // check for mqtt messages
+    delay(250); // let esp do its background tasks
   }
 
     
